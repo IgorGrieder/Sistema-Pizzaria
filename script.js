@@ -18,6 +18,7 @@ let currentPizzaSize = 2;
 
 // start the website
 showPizza();
+updateCart();
 
 // close the modal when clicking on cancel
 quitModal.addEventListener("click", () => closeModal());
@@ -213,11 +214,46 @@ function closeCart() {
 // update the cart area display
 function updateCart() {
 
+    // reseting the HTML of cart
+    cart.innerHTML = "";
+    
+    // Pricing of the cart
+    let subtotal = 0;
+    let discount = 0;
+    let totalPrice = 0;
+
     // updating cart number
-    cartNumber += currentPizzaCount;
-    openCartTop.querySelector("span").innerHTML = cartNumber;
+    if (currentPizza !== null) {
+        cartNumber += currentPizzaCount;
+        openCartTop.querySelector("span").innerHTML = cartNumber;
+    }
 
     cartItems.forEach((item) => {
 
-    })
+        // cloning the structure
+        const add = document.querySelector(".models .cart--item").cloneNode(true);
+
+        // changing the image for each pizza
+        add.querySelector("img").src = item.img;
+
+        // changing the name
+        add.querySelector(".cart--item-nome").innerHTML = item.name;
+
+        // changing the quantity
+        add.querySelector(".cart--item--qt").innerHTML = item.quantity;
+
+        // adding the price
+        subtotal += item.quantity * item.price;
+
+        // adding the pizza to the cart display
+        cart.append(add);
+    });
+
+    // displaying the discounts, total and subtotal to the cart
+    discount = (subtotal * 0.1).toFixed(2);
+    totalPrice = (subtotal - discount).toFixed(2);
+
+    document.querySelector("#subtotal").innerHTML = `R${subtotal.toFixed(2)}`;
+    document.querySelector("#desc").innerHTML = `R$${discount}`;
+    document.querySelector("#total").innerHTML = `R$${totalPrice}`;
 }
