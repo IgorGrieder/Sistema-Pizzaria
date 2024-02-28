@@ -4,11 +4,15 @@ const modalArea = document.querySelector(".pizzaWindowArea");
 const quitModal = document.querySelector(".pizzaInfo--cancelButton");
 const openCartTop = document.querySelector(".menu-openner");
 const menuCloserTop = document.querySelector(".menu-closer");
+const cart = document.querySelector(".cart");
 const aside = document.querySelector("aside");
 const cartItems = [];
+
 let cartNumber = 0;
 let currentPizza = null;
 let currentPizzaCount = 1;
+let currentPizzaPrice = 0;
+let currentPizzaSize = 2;
 
 // -------------------------------- events --------------------------------
 
@@ -39,8 +43,12 @@ modalArea.querySelectorAll(".pizzaInfo--size").forEach((item, index) => item.add
     event.currentTarget.classList.add("selected");
     
     // changing the price to the correct size
-    modalArea.querySelector(".pizzaInfo--actualPrice").innerHTML = `R$${pizzaJson[currentPizza].price[index].toFixed(2)}`;
-    
+    currentPizzaPrice = pizzaJson[currentPizza].price[index];
+    modalArea.querySelector(".pizzaInfo--actualPrice").innerHTML = `R$${currentPizzaPrice.toFixed(2)}`;
+
+    // changing the pizza size
+    currentPizzaSize = index;
+
     // reset the quantity
     modalArea.querySelector(".pizzaInfo--qt").innerHTML = "1";
 }));
@@ -61,39 +69,41 @@ modalArea.querySelector(".pizzaInfo--qtmenos").addEventListener("click", () => {
     }
 });
 
-/*
+// adding the pizza to the cart
+modalArea.querySelector(".pizzaInfo--addButton").addEventListener("click", () => {
+    // getting the pizza name to display
+    const name = `${pizzaJson[currentPizza].name} (${document.querySelector(".selected").innerHTML[0]})`;
 
-            // adding event to add to the cart
-            modalArea.querySelector(".pizzaInfo--addButton").addEventListener("click", () => {
+    // getting the image
+    const img = pizzaJson[currentPizza].img;
 
-                // updates the number of pizzas in the cart
-                let countPizza = parseInt(modalArea.querySelector(".pizzaInfo--qt").innerHTML);
-                cartNumber += countPizza;
+    // getting the id
+    const id = `${pizzaJson[currentPizza].id}@${currentPizzaSize}`;
 
-                // getting the pizza name to display on the cart
-                let name = `${pizza.name} (${document.querySelector(".pizzaInfo--size.selected").innerHTML[0]})`;
+    // creating a object to retain information about the pizza
+    const newPizza = {
+        id,
+        name,
+        quantity: currentPizzaCount,
+        price: currentPizzaPrice,
+        img,
+    }
 
-                // getting the pizza image
-                let img = pizza.img;
+    // checking if the pizza is already in the pizza cart
+    const samePizza = cartItems.findIndex((item) => item.id === id);
 
-                // creating a object pizza to add to the cart
-                const pizzaCart = {
-                    name,
-                    countPizza,
-                    img,
-                    pizzaPrice
-                };
+    if (samePizza !== -1) {
+        cartItems[samePizza].quantity += currentPizzaCount;
+    } else {
+        // inserting the new pizza to the cart if there isn't one equals to it on the cart already
+        cartItems.push(newPizza);
+    }
 
-                // adding the object to the pizza cart
-                cartItems.push(pizzaCart);
-
-                // opens the cart area
-                openCart();
-
-                // closes the modal area
-                closeModal();
-            });
-*/
+    // closign the modal and opening the cart area
+    closeModal();
+    updateCart();
+    openCart();
+});
 
 // -------------------------------- general functions --------------------------------
 
@@ -126,12 +136,18 @@ function showPizza() {
 
         // adding a event to open the modal for each pizza selected
         newPizza.querySelector("a").addEventListener("click", (event) => {
+            
+            // show the current pizza on the modal
+            currentPizza = newPizza.getAttribute("data-pizza");
 
             // reseting the pizza count
             currentPizzaCount = 1;
+            
+            // setting a current pizza price
+            currentPizzaPrice = pizzaJson[currentPizza].price[2];
 
-            // show the current pizza on the modal
-            currentPizza = newPizza.getAttribute("data-pizza");
+            // setting the current pizza size
+            currentPizzaSize = 2;
 
             // preventing default refresh of the page
             event.preventDefault();
@@ -192,4 +208,16 @@ function openCart() {
 // close the cart area
 function closeCart() {
     aside.classList.remove("show");
+}
+
+// update the cart area display
+function updateCart() {
+
+    // updating cart number
+    cartNumber += currentPizzaCount;
+    openCartTop.querySelector("span").innerHTML = cartNumber;
+
+    cartItems.forEach((item) => {
+
+    })
 }
