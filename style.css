@@ -100,7 +100,7 @@ header {
 }
 
 .cart--area h1 {
-    margin-top: 2rem;
+    margin-top: 5rem;
 }
 
 .menu-openner span {
@@ -110,7 +110,7 @@ header {
 .menu-closer {
     width:32px;
     height:32px;
-    display:none;
+    display:block;
     font-size: 30px;
     margin-top: 4rem;
     cursor: pointer;
