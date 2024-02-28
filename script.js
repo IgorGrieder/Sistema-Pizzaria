@@ -2,12 +2,13 @@
 const pizzaArea = document.querySelector(".pizza-area");
 const modalArea = document.querySelector(".pizzaWindowArea");
 const quitModal = document.querySelector(".pizzaInfo--cancelButton");
+const quitModalMobile = document.querySelector(".pizzaInfo--cancelMobileButton");
 const openCartTop = document.querySelector(".menu-openner");
 const menuCloserTop = document.querySelector(".menu-closer");
 const cart = document.querySelector(".cart");
 const aside = document.querySelector("aside");
 const cartItems = [];
-
+console.log(window.innerWidth);
 let cartNumber = 0;
 let currentPizza = null;
 let currentPizzaCount = 1;
@@ -22,9 +23,11 @@ updateCart();
 
 // close the modal when clicking on cancel
 quitModal.addEventListener("click", () => closeModal());
+quitModalMobile.addEventListener("click", () => closeModal());
 
 // open the cart or close it when clicked
 openCartTop.addEventListener("click", () => {
+   
     // if the user clicks on it when the cart is open it closes
     if (aside.classList.contains("show")) {
         aside.classList.remove("show");
@@ -52,6 +55,7 @@ modalArea.querySelectorAll(".pizzaInfo--size").forEach((item, index) => item.add
 
     // reset the quantity
     modalArea.querySelector(".pizzaInfo--qt").innerHTML = "1";
+    currentPizzaCount = 1;
 }));
 
 // adding event to control increment of pizza quantity
@@ -208,11 +212,21 @@ function openCart() {
     aside.style.opacity = "0";
     aside.classList.add("show");
     aside.style.opacity = "1";
+
+    // for the mobile display the cart
+    if (window.innerWidth < 840) {
+        aside.style.left = "0";
+    }
 }
 
 // close the cart area
 function closeCart() {
     aside.classList.remove("show");
+
+    // for the mobile close the cart
+    if (window.innerWidth < 840) {
+        document.querySelector("aside").style.left = "100vw";
+    }
 }
 
 // update the cart area display
@@ -262,7 +276,7 @@ function updateCart() {
         // adding event to increase pizza count
         add.querySelector(".cart--item-qtmais").addEventListener("click", () => {
             item.quantity++;
-            
+
             // changing the cart number and updating the cart
             cartNumber++;
             openCartTop.querySelector("span").innerHTML = cartNumber;
