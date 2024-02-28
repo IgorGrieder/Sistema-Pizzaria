@@ -100,6 +100,10 @@ modalArea.querySelector(".pizzaInfo--addButton").addEventListener("click", () =>
         cartItems.push(newPizza);
     }
 
+    // changing the cart number
+    cartNumber += currentPizzaCount;
+    openCartTop.querySelector("span").innerHTML = cartNumber;
+
     // closign the modal and opening the cart area
     closeModal();
     updateCart();
@@ -216,19 +220,16 @@ function updateCart() {
 
     // reseting the HTML of cart
     cart.innerHTML = "";
-    
+
     // Pricing of the cart
     let subtotal = 0;
     let discount = 0;
     let totalPrice = 0;
 
     // updating cart number
-    if (currentPizza !== null) {
-        cartNumber += currentPizzaCount;
-        openCartTop.querySelector("span").innerHTML = cartNumber;
-    }
-
-    cartItems.forEach((item) => {
+    
+    // adding the pizzas to the cart
+    cartItems.forEach((item, index) => {
 
         // cloning the structure
         const add = document.querySelector(".models .cart--item").cloneNode(true);
@@ -244,6 +245,29 @@ function updateCart() {
 
         // adding the price
         subtotal += item.quantity * item.price;
+
+        // adding event to decrease pizza count
+        add.querySelector(".cart--item-qtmenos").addEventListener("click", () => {
+            // remove the cartItem if the quantity be less then 1
+            if (item.quantity === 1) {
+                cartItems.splice(index, 1);
+            } else item.quantity--;
+
+            // changing the cart number and updating the cart
+            cartNumber--;
+            openCartTop.querySelector("span").innerHTML = cartNumber;
+            updateCart();
+        }); 
+
+        // adding event to increase pizza count
+        add.querySelector(".cart--item-qtmais").addEventListener("click", () => {
+            item.quantity++;
+            
+            // changing the cart number and updating the cart
+            cartNumber++;
+            openCartTop.querySelector("span").innerHTML = cartNumber;
+            updateCart();
+        });
 
         // adding the pizza to the cart display
         cart.append(add);
